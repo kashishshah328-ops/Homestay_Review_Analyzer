@@ -9,15 +9,21 @@ export default function Login() {
 
       <Navbar />
 
-      <main className="min-h-screen flex justify-center items-center">
+      <main className="min-h-screen flex justify-center items-center bg-gray-50">
 
-        <div className="shadow-lg p-8 rounded-lg w-96">
+        <div className="bg-white shadow-xl p-8 rounded-2xl w-96">
 
-          <h1 className="text-3xl font-bold mb-6">
+          <h1 className="text-3xl font-bold text-emerald-700 mb-2">
 
-            Login
+            Welcome Back 👋
 
           </h1>
+
+          <p className="text-gray-500 mb-6">
+
+            Login to access your AI Review Analytics Dashboard
+
+          </p>
 
           <input
 
@@ -25,7 +31,7 @@ export default function Login() {
 
             placeholder="Enter Email"
 
-            className="border p-3 rounded w-full mb-4"
+            className="border border-gray-300 p-3 rounded-lg w-full mb-4 focus:outline-none focus:ring-2 focus:ring-emerald-500"
 
           />
 
@@ -35,15 +41,24 @@ export default function Login() {
 
             placeholder="Enter Password"
 
-            className="border p-3 rounded w-full mb-4"
+            className="border border-gray-300 p-3 rounded-lg w-full mb-4 focus:outline-none focus:ring-2 focus:ring-emerald-500"
 
           />
 
-          <button className="bg-green-700 text-white py-3 rounded w-full">
+          <button className="bg-emerald-700 hover:bg-emerald-800 text-white py-3 rounded-lg w-full transition duration-300">
 
             Login
 
           </button>
+
+          <p className="text-center text-sm text-gray-500 mt-4">
+
+            Don't have an account?{" "}
+            <span className="text-emerald-700 font-medium cursor-pointer">
+              Sign Up
+            </span>
+
+          </p>
 
         </div>
 
