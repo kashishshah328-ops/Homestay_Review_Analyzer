@@ -18,12 +18,9 @@ export default function Dashboard() {
 
           </h1>
 
-          <p className="mt-4 text-gray-600 text-lg">
-
-            Monitor guest feedback, sentiments and AI-generated insights
-            for better customer experience.
-
-          </p>
+          <p className="mt-2 text-emerald-600 font-medium">
+            Welcome back 👋 Here's your latest review analysis.
+           </p>
 
           {/* Statistics */}
 
