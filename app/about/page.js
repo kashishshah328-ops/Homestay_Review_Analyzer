@@ -12,13 +12,19 @@ export default function About() {
 
         <div className="max-w-6xl mx-auto">
 
-          <h1 className="text-4xl font-bold text-emerald-700">
+          <h1 className="text-4xl md:text-5xl font-bold text-emerald-700">
 
             About Homestay Review Analyzer
 
           </h1>
 
-          <p className="mt-6 text-lg text-gray-700">
+          <p className="mt-3 text-emerald-600 font-medium">
+
+            AI-powered insights to improve guest experiences and business decisions.
+
+          </p>
+
+          <p className="mt-6 text-lg text-gray-700 leading-8">
 
             Homestay Review Analyzer is an AI-powered web application
             designed to help homestay owners analyze guest feedback
@@ -30,12 +36,14 @@ export default function About() {
           </p>
 
           <h2 className="text-3xl font-bold mt-12 text-emerald-700">
-              Key Features
+
+            Key Features
+
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
 
-            <div className="bg-white shadow-lg rounded-xl p-6">
+            <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition duration-300">
 
               <h3 className="font-bold text-xl text-emerald-700">
 
@@ -52,7 +60,7 @@ export default function About() {
 
             </div>
 
-            <div className="bg-white shadow-lg rounded-xl p-6">
+            <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition duration-300">
 
               <h3 className="font-bold text-xl text-emerald-700">
 
@@ -69,7 +77,7 @@ export default function About() {
 
             </div>
 
-            <div className="bg-white shadow-lg rounded-xl p-6">
+            <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition duration-300">
 
               <h3 className="font-bold text-xl text-emerald-700">
 
@@ -86,7 +94,7 @@ export default function About() {
 
             </div>
 
-            <div className="bg-white shadow-lg rounded-xl p-6">
+            <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition duration-300">
 
               <h3 className="font-bold text-xl text-emerald-700">
 
