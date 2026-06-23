@@ -13,7 +13,8 @@ export default function Button({
   variant = "primary",
   size = "md",
   disabled = false,
-  onClick
+  onClick,
+  type = "button"
 }) {
 
   const variants = {
