@@ -8,7 +8,19 @@ export default function About() {
     <>
       <Navbar />
 
-      <main className="min-h-screen bg-gray-50 p-8">
+      <main
+        className="
+        min-h-screen
+
+        bg-gray-50
+        dark:bg-gray-900
+
+        text-black
+        dark:text-white
+
+        p-8
+      "
+      >
 
         <div className="max-w-6xl mx-auto">
 
@@ -24,7 +36,7 @@ export default function About() {
 
           </p>
 
-          <p className="mt-6 text-lg text-gray-700 leading-8">
+          <p className="mt-6 text-lg text-gray-700 dark:text-gray-300 leading-8">
 
             Homestay Review Analyzer is an AI-powered web application
             designed to help homestay owners analyze guest feedback
@@ -43,7 +55,28 @@ export default function About() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
 
-            <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition duration-300">
+            {/* Card 1 */}
+
+            <div
+              className="
+              bg-white
+              dark:bg-gray-800
+
+              shadow-lg
+              rounded-xl
+              p-6
+
+              border
+              border-gray-100
+              dark:border-gray-700
+
+              hover:shadow-2xl
+              hover:-translate-y-1
+
+              transition
+              duration-300
+            "
+            >
 
               <h3 className="font-bold text-xl text-emerald-700">
 
@@ -51,7 +84,7 @@ export default function About() {
 
               </h3>
 
-              <p className="mt-3 text-gray-600">
+              <p className="mt-3 text-gray-600 dark:text-gray-300">
 
                 Classify reviews as Positive,
                 Neutral or Negative.
@@ -60,7 +93,28 @@ export default function About() {
 
             </div>
 
-            <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition duration-300">
+            {/* Card 2 */}
+
+            <div
+              className="
+              bg-white
+              dark:bg-gray-800
+
+              shadow-lg
+              rounded-xl
+              p-6
+
+              border
+              border-gray-100
+              dark:border-gray-700
+
+              hover:shadow-2xl
+              hover:-translate-y-1
+
+              transition
+              duration-300
+            "
+            >
 
               <h3 className="font-bold text-xl text-emerald-700">
 
@@ -68,7 +122,7 @@ export default function About() {
 
               </h3>
 
-              <p className="mt-3 text-gray-600">
+              <p className="mt-3 text-gray-600 dark:text-gray-300">
 
                 Identify themes such as Food,
                 Host, Location and Experience.
@@ -77,7 +131,28 @@ export default function About() {
 
             </div>
 
-            <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition duration-300">
+            {/* Card 3 */}
+
+            <div
+              className="
+              bg-white
+              dark:bg-gray-800
+
+              shadow-lg
+              rounded-xl
+              p-6
+
+              border
+              border-gray-100
+              dark:border-gray-700
+
+              hover:shadow-2xl
+              hover:-translate-y-1
+
+              transition
+              duration-300
+            "
+            >
 
               <h3 className="font-bold text-xl text-emerald-700">
 
@@ -85,7 +160,7 @@ export default function About() {
 
               </h3>
 
-              <p className="mt-3 text-gray-600">
+              <p className="mt-3 text-gray-600 dark:text-gray-300">
 
                 Generate professional management
                 responses automatically.
@@ -94,7 +169,28 @@ export default function About() {
 
             </div>
 
-            <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition duration-300">
+            {/* Card 4 */}
+
+            <div
+              className="
+              bg-white
+              dark:bg-gray-800
+
+              shadow-lg
+              rounded-xl
+              p-6
+
+              border
+              border-gray-100
+              dark:border-gray-700
+
+              hover:shadow-2xl
+              hover:-translate-y-1
+
+              transition
+              duration-300
+            "
+            >
 
               <h3 className="font-bold text-xl text-emerald-700">
 
@@ -102,7 +198,7 @@ export default function About() {
 
               </h3>
 
-              <p className="mt-3 text-gray-600">
+              <p className="mt-3 text-gray-600 dark:text-gray-300">
 
                 Summarize multiple reviews
                 into actionable insights.
