@@ -2,15 +2,46 @@ export default function Card({ title, desc }) {
 
   return (
 
-    <div className="bg-white shadow-lg rounded-xl p-8 hover:shadow-2xl transition">
+    <div
+      className="
+      bg-white
+      dark:bg-gray-800
 
-      <h2 className="text-3xl font-bold text-emerald-700">
+      shadow-lg
+      rounded-xl
+
+      p-8
+
+      hover:shadow-2xl
+
+      transition
+      duration-300
+    "
+    >
+
+      <h2
+        className="
+        text-3xl
+        font-bold
+
+        text-emerald-700
+      "
+      >
 
         {title}
 
       </h2>
 
-      <p className="mt-5 text-gray-700 text-lg">
+      <p
+        className="
+        mt-5
+
+        text-lg
+
+        text-gray-700
+        dark:text-gray-300
+      "
+      >
 
         {desc}
 
