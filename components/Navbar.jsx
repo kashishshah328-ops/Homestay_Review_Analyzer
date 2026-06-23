@@ -1,30 +1,71 @@
-import Link from "next/link";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
 
   return (
 
-    <nav className="bg-green-700 text-white px-6 py-4">
+    <nav
+      className="
+      bg-emerald-700
+      text-white
 
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
+      px-3
+      py-3
 
-        <h1 className="text-2xl font-bold">
+      flex
+      flex-col
 
-          Homestay Review Analyzer
+      md:flex-row
 
-        </h1>
+      items-center
+      justify-between
 
-        <div className="flex gap-6 mt-3 md:mt-0">
+      gap-3
 
-          <Link href="/">Home</Link>
+      w-full
+      "
+    >
 
-          <Link href="/about">About</Link>
+      <h1 className="
+      text-xl
+      md:text-2xl
 
-          <Link href="/dashboard">Dashboard</Link>
+      font-bold
 
-          <Link href="/login">Login</Link>
+      text-center
+      ">
 
-        </div>
+        Homestay Review Analyzer
+
+      </h1>
+
+      <div
+        className="
+        flex
+
+        flex-wrap
+
+        justify-center
+
+        items-center
+
+        gap-3
+
+        text-sm
+        "
+      >
+
+        <ThemeToggle />
+
+        <a href="/">Home</a>
+
+        <a href="/about">About</a>
+
+        <a href="/dashboard">Dashboard</a>
+
+        <a href="/signup">Signup</a>
+
+        <a href="/login">Login</a>
 
       </div>
 
