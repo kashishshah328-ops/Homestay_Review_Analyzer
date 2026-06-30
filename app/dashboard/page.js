@@ -1,41 +1,81 @@
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+"use client";
+
+import { useState, useEffect } from "react";
+
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import Loader from "@/components/ui/Loader";
+import Toast from "@/components/ui/Toast";
+
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Dashboard() {
+  // State
+  const [review, setReview] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [reviews, setReviews] = useState([]);
 
-  // mock analytics data (later you can replace with API data)
-  const stats = [
-    {
-      title: "Total Reviews",
-      value: 120,
-      color: "text-emerald-700",
-    },
-    {
-      title: "Average Rating",
-      value: "4.3 ⭐",
-      color: "text-yellow-500",
-    },
-    {
-      title: "Positive Reviews",
-      value: "85%",
-      color: "text-green-600",
-    },
-  ];
+  // Fetch all reviews
+  const fetchReviews = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/reviews");
+      const data = await response.json();
 
-  const ratingBreakdown = [
-    { star: 5, count: 60 },
-    { star: 4, count: 35 },
-    { star: 3, count: 15 },
-    { star: 2, count: 6 },
-    { star: 1, count: 4 },
-  ];
+      setReviews(data);
+    } catch (error) {
+      toast.error("Failed to load reviews.");
+    }
+  };
+
+  // Load reviews on page load
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+
+  // Submit Review
+  const analyzeReview = async () => {
+    if (!review.trim()) {
+      toast.error("Please enter a review.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/reviews", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          guestName: "Kashish",
+          review: review,
+          sentiment: "Pending",
+        }),
+      });
+
+      const data = await response.json();
+
+      setResult(data);
+
+      // Refresh review list
+      fetchReviews();
+
+      toast.success("Review submitted successfully!");
+    } catch (error) {
+      toast.error("Backend connection failed.");
+    }
+
+    setLoading(false);
+  };
 
   return (
     <>
       <Navbar />
+      <Toaster />
 
       <main className="min-h-screen bg-gray-50 dark:bg-gray-900 text-black dark:text-white p-8">
-
         <div className="max-w-6xl mx-auto">
 
           {/* Header */}
@@ -47,103 +87,83 @@ export default function Dashboard() {
             Welcome back 👋 Here's your latest review analysis.
           </p>
 
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+          {/* Input Section */}
+          <div className="mt-8 bg-white dark:bg-gray-800 p-6 rounded-xl shadow">
 
-            {stats.map((item, index) => (
-              <div
-                key={index}
-                className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-8 text-center"
-              >
-                <h2 className={`text-5xl font-bold ${item.color}`}>
-                  {item.value}
+            <textarea
+              className="border w-full p-4 mt-4 rounded dark:bg-gray-700 dark:text-white"
+              rows="8"
+              placeholder="Paste guest reviews here..."
+              value={review}
+              onChange={(e) => setReview(e.target.value)}
+            />
+
+            <button
+              onClick={analyzeReview}
+              className="bg-green-700 hover:bg-green-800 text-white px-5 py-2 rounded mt-4"
+            >
+              Analyze Reviews
+            </button>
+
+            {/* Loader */}
+            {loading && <Loader />}
+
+            {/* Backend Response */}
+            {result && (
+              <div className="mt-6 border p-4 rounded bg-gray-100 text-black">
+                <h2 className="font-bold text-lg mb-2">
+                  Backend Response
                 </h2>
 
-                <p className="mt-3 text-gray-600 dark:text-gray-300">
-                  {item.title}
-                </p>
+                <pre>{JSON.stringify(result, null, 2)}</pre>
               </div>
-            ))}
+            )}
 
-          </div>
+            {/* Reviews List */}
+            {reviews.length > 0 && (
+              <div className="mt-8">
+                <h2 className="text-2xl font-bold mb-4 dark:text-white">
+                  All Reviews
+                </h2>
 
-          {/* Rating Breakdown */}
-          <h2 className="text-3xl font-bold mt-14 mb-6 text-gray-800 dark:text-white">
-            Rating Breakdown
-          </h2>
-
-          <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
-
-            {ratingBreakdown.map((item, index) => (
-              <div key={index} className="flex items-center justify-between mb-3">
-
-                <span className="text-gray-700 dark:text-gray-300">
-                  {"⭐".repeat(item.star)} ({item.star})
-                </span>
-
-                <div className="w-2/3 bg-gray-200 dark:bg-gray-700 rounded-full h-3 mx-4">
+                {reviews.map((item) => (
                   <div
-                    className="bg-emerald-500 h-3 rounded-full"
-                    style={{ width: `${item.count * 2}%` }}
-                  ></div>
-                </div>
+                    key={item.id}
+                    className="border rounded p-4 mb-4 bg-white dark:bg-gray-800 dark:text-white shadow"
+                  >
+                    <p>
+                      <strong>Guest:</strong> {item.guestName}
+                    </p>
 
-                <span className="text-sm text-gray-600 dark:text-gray-300">
-                  {item.count}
-                </span>
+                    <p className="mt-2">
+                      <strong>Review:</strong> {item.review}
+                    </p>
 
+                    <p className="mt-2">
+                      <strong>Sentiment:</strong>{" "}
+                      {item.sentiment || "Pending"}
+                    </p>
+
+                    <p className="mt-2">
+                      <strong>Theme:</strong>{" "}
+                      {item.theme || "N/A"}
+                    </p>
+
+                    <p className="mt-2">
+                      <strong>Response:</strong>{" "}
+                      {item.response || "N/A"}
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))}
-
-          </div>
-
-          {/* AI Insights */}
-          <h2 className="text-3xl font-bold mt-14 mb-6 text-gray-800 dark:text-white">
-            AI Insights
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
-              <h3 className="text-xl font-bold text-emerald-700">
-                😊 Most Appreciated
-              </h3>
-              <p className="mt-4 text-gray-600 dark:text-gray-300">
-                Guests frequently praise the location, hospitality and scenic views.
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
-              <h3 className="text-xl font-bold text-red-500">
-                ⚠ Areas for Improvement
-              </h3>
-              <p className="mt-4 text-gray-600 dark:text-gray-300">
-                Food quality and Wi-Fi connectivity require improvement.
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
-              <h3 className="text-xl font-bold text-blue-600">
-                📈 Trending Theme
-              </h3>
-              <p className="mt-4 text-gray-600 dark:text-gray-300">
-                Location is the most discussed theme among guests this month.
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
-              <h3 className="text-xl font-bold text-purple-600">
-                💡 Recommendation
-              </h3>
-              <p className="mt-4 text-gray-600 dark:text-gray-300">
-                Improve food options and internet facilities to enhance guest satisfaction.
-              </p>
-            </div>
+            )}
 
           </div>
 
         </div>
       </main>
+
+      <Toast />
 
       <Footer />
     </>
