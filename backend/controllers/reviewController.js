@@ -1,107 +1,252 @@
-const reviews = require("../data/reviews");
+const Review = require("../models/Review");
 
 // GET ALL REVIEWS
-const getAllReviews = (req, res) => {
-  res.status(200).json(reviews);
+const getAllReviews = async (req, res) => {
+  try {
+    const reviews = await Review.find();
+    res.status(200).json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 // GET REVIEW BY ID
-const getReviewById = (req, res) => {
-  const id = parseInt(req.params.id);
+const getReviewById = async (req, res) => {
+  try {
+    const review = await Review.findById(req.params.id);
 
-  const review = reviews.find((r) => r.id === id);
+    if (!review) {
+      return res.status(404).json({
+        message: "Review not found",
+      });
+    }
 
-  if (!review) {
-    return res.status(404).json({
-      message: "Review not found",
-    });
+    res.status(200).json(review);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
-
-  res.status(200).json(review);
 };
 
 // CREATE REVIEW
-const createReview = (req, res) => {
-  const { guestName, review, sentiment, theme, response } = req.body;
+// CREATE REVIEW
+const createReview = async (req, res) => {
+  try {
+    const { guestName, hotelName, review, rating } = req.body;
 
-  if (!guestName || !review) {
-    return res.status(400).json({
-      message: "Guest name and review are required",
+    if (!guestName || !review) {
+      return res.status(400).json({
+        message: "Guest name and review are required",
+      });
+    }
+
+    const positiveWords = [
+      "clean",
+      "excellent",
+      "good",
+      "friendly",
+      "great",
+      "comfortable",
+      "helpful",
+      "amazing",
+      "awesome",
+      "perfect",
+      "nice",
+      "love",
+    ];
+
+    const negativeWords = [
+      "dirty",
+      "bad",
+      "worst",
+      "late",
+      "smelly",
+      "poor",
+      "terrible",
+      "awful",
+      "horrible",
+      "rude",
+      "disappointing",
+      "broken",
+      "noisy",
+      "uncomfortable",
+      "not clean",
+    ];
+
+    let sentiment = "Neutral";
+    let theme = "General";
+    let response = "Thank you for your valuable feedback.";
+
+    const reviewText = review.toLowerCase();
+
+    // Detect Positive
+    if (positiveWords.some((word) => reviewText.includes(word))) {
+      sentiment = "Positive";
+      theme = "Hospitality";
+      response = "Thank you for your wonderful feedback!";
+    }
+
+    // Detect Negative (overrides Positive if both are found)
+    if (negativeWords.some((word) => reviewText.includes(word))) {
+      sentiment = "Negative";
+      theme = "Cleanliness";
+      response = "We sincerely apologize for your experience.";
+    }
+
+    // Debug log
+    console.log("==================================");
+    console.log("Review:", review);
+    console.log("Detected Sentiment:", sentiment);
+    console.log("Rating:", rating);
+    console.log("==================================");
+
+    const newReview = await Review.create({
+      guestName,
+      hotelName,
+      review,
+      rating,
+      sentiment,
+      theme,
+      response,
+    });
+
+    res.status(201).json(newReview);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
     });
   }
-
-  const newReview = {
-    id: reviews.length + 1,
-    guestName,
-    review,
-    sentiment,
-    theme,
-    response,
-  };
-
-  reviews.push(newReview);
-
-  res.status(201).json(newReview);
 };
 
 // UPDATE REVIEW
-const updateReview = (req, res) => {
-  const id = parseInt(req.params.id);
+const updateReview = async (req, res) => {
+  try {
+    const { guestName, hotelName, review, rating } = req.body;
 
-  const reviewIndex = reviews.findIndex((r) => r.id === id);
+    const positiveWords = [
+      "clean",
+      "excellent",
+      "good",
+      "friendly",
+      "great",
+      "comfortable",
+      "helpful",
+      "amazing",
+      "awesome",
+      "perfect",
+      "nice",
+      "love",
+    ];
 
-  if (reviewIndex === -1) {
-    return res.status(404).json({
-      message: "Review not found",
-    });
-  }
+    const negativeWords = [
+      "dirty",
+      "bad",
+      "worst",
+      "late",
+      "smelly",
+      "poor",
+      "terrible",
+      "awful",
+      "horrible",
+      "rude",
+      "disappointing",
+      "broken",
+      "noisy",
+      "uncomfortable",
+      "not clean",
+    ];
 
-  reviews[reviewIndex] = {
-    ...reviews[reviewIndex],
-    ...req.body,
-  };
+    let sentiment = "Neutral";
+    let theme = "General";
+    let response = "Thank you for your valuable feedback.";
 
-  res.status(200).json({
-    message: "Review updated successfully",
-    review: reviews[reviewIndex],
-  });
-};
+    const reviewText = review.toLowerCase();
 
-// DELETE REVIEW (MOVE THIS UP)
-const deleteReview = (req, res) => {
-  const id = parseInt(req.params.id);
+    if (positiveWords.some((word) => reviewText.includes(word))) {
+      sentiment = "Positive";
+      theme = "Hospitality";
+      response = "Thank you for your wonderful feedback!";
+    }
 
-  const reviewIndex = reviews.findIndex((r) => r.id === id);
+    if (negativeWords.some((word) => reviewText.includes(word))) {
+      sentiment = "Negative";
+      theme = "Cleanliness";
+      response = "We sincerely apologize for your experience.";
+    }
 
-  if (reviewIndex === -1) {
-    return res.status(404).json({
-      message: "Review not found",
-    });
-  }
-
-  reviews.splice(reviewIndex, 1);
-
-  res.status(204).send();
-};
-const searchReviews = (req, res) => {
-  const query = req.query.q;
-
-  if (!query) {
-    return res.status(400).json({
-      message: "Search query is required",
-    });
-  }
-
-  const result = reviews.filter((r) => {
-    return (
-      (r.review && r.review.toLowerCase().includes(query.toLowerCase())) ||
-      (r.guestName && r.guestName.toLowerCase().includes(query.toLowerCase()))
+    const updatedReview = await Review.findByIdAndUpdate(
+      req.params.id,
+      {
+        guestName,
+        hotelName,
+        review,
+        rating,
+        sentiment,
+        theme,
+        response,
+      },
+      { new: true }
     );
-  });
 
-  res.status(200).json(result);
+    if (!updatedReview) {
+      return res.status(404).json({
+        message: "Review not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Review updated successfully",
+      review: updatedReview,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
 };
-// EXPORTS (LAST ONLY)
+
+// DELETE REVIEW
+const deleteReview = async (req, res) => {
+  try {
+    const deletedReview = await Review.findByIdAndDelete(req.params.id);
+
+    if (!deletedReview) {
+      return res.status(404).json({
+        message: "Review not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Review deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// SEARCH REVIEWS
+const searchReviews = async (req, res) => {
+  try {
+    const query = req.query.q;
+
+    if (!query) {
+      return res.status(400).json({
+        message: "Search query is required",
+      });
+    }
+
+    const result = await Review.find({
+      $or: [
+        { guestName: { $regex: query, $options: "i" } },
+        { review: { $regex: query, $options: "i" } },
+      ],
+    });
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getAllReviews,
   getReviewById,

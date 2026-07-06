@@ -6,17 +6,35 @@ const reviewSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    homestay: {
+
+    hotelName: {
+       type: String,
+       default: "",
+    },
+
+    review: {
       type: String,
       required: true,
     },
+
     rating: {
-      type: Number,
-      required: true,
+     type: Number,
+     default: 0,
     },
-    comment: {
+
+    sentiment: {
       type: String,
-      required: true,
+      default: "Neutral",
+    },
+
+    theme: {
+      type: String,
+      default: "General",
+    },
+
+    response: {
+      type: String,
+      default: "Thank you for your valuable feedback.",
     },
   },
   {

@@ -1,10 +1,15 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const reviewRoutes = require("./routes/reviewRoutes");
 const errorHandler = require("./middleware/errorHandler");
-
+const connectDB = require("./config/db");   // <-- ADD THIS
+const dashboardRoutes = require("./routes/dashboardRoutes");
 dotenv.config();
+
+// Connect to MongoDB
+connectDB();                                // <-- ADD THIS
 
 const app = express();
 
@@ -15,6 +20,7 @@ app.use(express.json());
 // routes
 app.use("/api/reviews", reviewRoutes);
 
+app.use("/api/dashboard", dashboardRoutes);
 // test route
 app.get("/", (req, res) => {
   res.json({
