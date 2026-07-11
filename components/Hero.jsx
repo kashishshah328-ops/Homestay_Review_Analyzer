@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -13,26 +12,32 @@ export default function Hero() {
   });
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/dashboard/stats");
+  const fetchStats = async () => {
+    try {
+      console.log("Fetching dashboard stats...");
 
-        if (!res.ok) {
-          throw new Error("Failed to fetch dashboard stats");
-        }
+      const res = await fetch("http://localhost:5000/api/dashboard/stats");
 
-        const data = await res.json();
-        setStats(data);
-      } catch (error) {
-        console.error("Dashboard Error:", error);
+      console.log("Status:", res.status);
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
       }
-    };
 
-    fetchStats();
-  }, []);
+      const data = await res.json();
+      console.log("Dashboard data:", data);
+
+      setStats(data);
+    } catch (error) {
+      console.error("Dashboard Error:", error);
+    }
+  };
+
+  fetchStats();
+}, []);
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-green-100 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900">
+    <section className="bg-linear-to-br from-emerald-50 via-white to-green-100 ..." >
       <div className="max-w-7xl mx-auto px-6 py-20 lg:py-28">
         <div className="grid lg:grid-cols-2 gap-14 items-center">
           {/* Left */}
