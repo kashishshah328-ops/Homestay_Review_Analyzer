@@ -2,11 +2,12 @@ const express = require("express");
 const router = express.Router();
 
 const Review = require("../models/Review");
+const protect = require("../middleware/authMiddleware");
 
 // =====================================
 // GET ALL REVIEWS
 // =====================================
-router.get("/", async (req, res) => {
+router.get("/", protect, async (req, res) => {
   try {
     const reviews = await Review.find();
     res.status(200).json(reviews);
@@ -18,7 +19,7 @@ router.get("/", async (req, res) => {
 // =====================================
 // GET REVIEW BY ID
 // =====================================
-router.get("/:id", async (req, res) => {
+router.get("/:id", protect, async (req, res) => {
   try {
     const review = await Review.findById(req.params.id);
 
@@ -39,7 +40,7 @@ router.get("/:id", async (req, res) => {
 // =====================================
 // CREATE REVIEW
 // =====================================
-router.post("/", async (req, res) => {
+router.post("/", protect, async (req, res) => {
   try {
     const { guestName, hotelName, review, rating } = req.body;
 
@@ -102,7 +103,7 @@ router.post("/", async (req, res) => {
 // =====================================
 // UPDATE REVIEW
 // =====================================
-router.put("/:id", async (req, res) => {
+router.put("/:id", protect, async (req, res) => {
   try {
     const { guestName, hotelName, review, rating } = req.body;
 
@@ -189,7 +190,7 @@ router.put("/:id", async (req, res) => {
 // =====================================
 // DELETE REVIEW
 // =====================================
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", protect, async (req, res) => {
   try {
     const deletedReview = await Review.findByIdAndDelete(req.params.id);
 
@@ -212,7 +213,7 @@ router.delete("/:id", async (req, res) => {
 // =====================================
 // REVIEW STATISTICS
 // =====================================
-router.get("/stats/summary", async (req, res) => {
+router.get("/stats/summary", protect, async (req, res) => {
   try {
     const totalReviews = await Review.countDocuments();
 
