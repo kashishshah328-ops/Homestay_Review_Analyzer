@@ -11,7 +11,7 @@ export default function About() {
 
         {/* ================= HERO SECTION ================= */}
 
-        <section className="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-green-100 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900">
+       <section className="min-h-screen bg-linear-to-br from-emerald-50 via-white to-blue-50">
 
           <div className="max-w-7xl mx-auto px-6 py-20 lg:py-28">
 
@@ -419,8 +419,7 @@ export default function About() {
 
         {/* ================= WHY CHOOSE US ================= */}
 
-        <section className="py-24 bg-gradient-to-br from-emerald-50 via-white to-green-100 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900">
-
+       <section className="min-h-screen bg-linear-to-br from-emerald-50 via-white to-blue-50">
           <div className="max-w-7xl mx-auto px-6">
 
             <div className="grid lg:grid-cols-2 gap-14 items-center">
