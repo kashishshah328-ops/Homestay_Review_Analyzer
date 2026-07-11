@@ -1,15 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Loader from "@/components/ui/Loader";
-import Toast from "@/components/ui/Toast";
 
 import toast, { Toaster } from "react-hot-toast";
 
 export default function Dashboard() {
+
+  const router = useRouter();
+
   // ===========================
   // STATES
   // ===========================
@@ -32,20 +35,47 @@ export default function Dashboard() {
 
   const fetchReviews = async () => {
     try {
+
       const response = await fetch(
-        "http://localhost:5000/api/reviews"
+        "http://localhost:5000/api/reviews",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
 
       const data = await response.json();
 
       setReviews(data);
+
     } catch (error) {
+
       toast.error("Failed to load reviews");
+
     }
   };
 
+  // ===========================
+  // AUTH CHECK
+  // ===========================
+
   useEffect(() => {
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+
+      toast.error("Please Login First");
+
+      router.push("/login");
+
+      return;
+    }
+
     fetchReviews();
+
   }, []);
 
   // ===========================
@@ -53,11 +83,13 @@ export default function Dashboard() {
   // ===========================
 
   const clearForm = () => {
+
     setGuestName("");
     setHotelName("");
     setReview("");
     setRating(5);
     setEditingId(null);
+
   };
 
   // ===========================
@@ -65,19 +97,19 @@ export default function Dashboard() {
   // ===========================
 
   const analyzeReview = async () => {
-    if (
-      !guestName ||
-      !hotelName ||
-      !review ||
-      !rating
-    ) {
-      toast.error("Please fill all fields.");
+
+    if (!guestName || !hotelName || !review || !rating) {
+
+      toast.error("Please fill all fields");
+
       return;
+
     }
 
     setLoading(true);
 
     try {
+
       const response = await fetch(
         "http://localhost:5000/api/reviews",
         {
@@ -85,6 +117,7 @@ export default function Dashboard() {
 
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
 
           body: JSON.stringify({
@@ -105,23 +138,30 @@ export default function Dashboard() {
       clearForm();
 
       toast.success("Review Added Successfully");
+
     } catch (error) {
+
       toast.error("Backend Connection Failed");
+
     }
 
     setLoading(false);
+
   };
-    // ===========================
+
+  // ===========================
   // EDIT REVIEW
   // ===========================
 
   const editReview = (item) => {
+
     setEditingId(item._id);
 
     setGuestName(item.guestName);
     setHotelName(item.hotelName);
     setReview(item.review);
     setRating(item.rating);
+
   };
 
   // ===========================
@@ -129,11 +169,13 @@ export default function Dashboard() {
   // ===========================
 
   const updateReview = async () => {
+
     if (!editingId) return;
 
     setLoading(true);
 
     try {
+
       const response = await fetch(
         `http://localhost:5000/api/reviews/${editingId}`,
         {
@@ -141,6 +183,7 @@ export default function Dashboard() {
 
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
 
           body: JSON.stringify({
@@ -161,11 +204,15 @@ export default function Dashboard() {
       clearForm();
 
       fetchReviews();
+
     } catch (error) {
+
       toast.error("Failed to update review");
+
     }
 
     setLoading(false);
+
   };
 
   // ===========================
@@ -173,6 +220,7 @@ export default function Dashboard() {
   // ===========================
 
   const deleteReview = async (id) => {
+
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this review?"
     );
@@ -180,190 +228,210 @@ export default function Dashboard() {
     if (!confirmDelete) return;
 
     try {
+
       await fetch(
         `http://localhost:5000/api/reviews/${id}`,
         {
           method: "DELETE",
+
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
       );
 
       toast.success("Review Deleted Successfully");
 
       fetchReviews();
+
     } catch (error) {
+
       toast.error("Failed to delete review");
+
     }
+
   };
 
   // ===========================
   // RETURN
   // ===========================
+  return (
+  <>
+    <Toaster
+      position="top-right"
+      toastOptions={{
+        duration: 3000,
+      }}
+    />
 
-  return (     <>
-     <Toaster
-  position="top-right"
-  toastOptions={{
-    duration: 3000,
-  }}
-/>
+    <Navbar />
 
-      <Navbar />
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-10 transition-colors">
+      <div className="max-w-6xl mx-auto px-4">
 
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-10 transition-colors">
-        <div className="max-w-6xl mx-auto px-4">
+        <h1 className="text-4xl font-bold text-center mb-8 text-slate-900 dark:text-white">
+          Hotel Review Dashboard
+        </h1>
 
-          <h1 className="text-4xl font-bold text-center mb-8 text-slate-900 dark:text-white">
-            Hotel Review Dashboard
-          </h1>
+        {/* Review Form */}
 
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl p-6">
 
-           <h2 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white">
-              {editingId ? "Update Review" : "Add New Review"}
-            </h2>
+          <h2 className="text-2xl font-bold mb-4 text-slate-900 dark:text-white">
+            {editingId ? "Update Review" : "Add New Review"}
+          </h2>
 
-            <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-4">
 
-              <input
-                type="text"
-                placeholder="Guest Name"
-                value={guestName}
-                onChange={(e) => setGuestName(e.target.value)}
-                className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white p-3 rounded-md"
-              />
+            <input
+              type="text"
+              placeholder="Guest Name"
+              value={guestName}
+              onChange={(e) => setGuestName(e.target.value)}
+              className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white p-3 rounded-md"
+            />
 
-              <input
-                type="text"
-                placeholder="Hotel Name"
-                value={hotelName}
-                onChange={(e) => setHotelName(e.target.value)}
-                className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white p-3 rounded-md"
-              />
+            <input
+              type="text"
+              placeholder="Hotel Name"
+              value={hotelName}
+              onChange={(e) => setHotelName(e.target.value)}
+              className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white p-3 rounded-md"
+            />
 
-              <textarea
-                placeholder="Write Review"
-                value={review}
-                onChange={(e) => setReview(e.target.value)}
-                className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white p-3 rounded-md md:col-span-2"
-                rows={4}
-              />
+            <textarea
+              placeholder="Write Review"
+              value={review}
+              onChange={(e) => setReview(e.target.value)}
+              className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white p-3 rounded-md md:col-span-2"
+              rows={4}
+            />
 
-              <input
-                type="number"
-                min="1"
-                max="5"
-                value={rating}
-                onChange={(e) => setRating(Number(e.target.value))}
-                className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white p-3 rounded-md"
-              />
-
-            </div>
-
-            <div className="mt-6 flex gap-4">
-
-              {editingId ? (
-                <>
-                  <button
-                    onClick={updateReview}
-                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded"
-                  >
-                    Update Review
-                  </button>
-
-                  <button
-                    onClick={clearForm}
-                    className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded"
-                  >
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={analyzeReview}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded"
-                >
-                  Add Review
-                </button>
-              )}
-
-            </div>
+            <input
+              type="number"
+              min="1"
+              max="5"
+              value={rating}
+              onChange={(e) => setRating(Number(e.target.value))}
+              className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white p-3 rounded-md"
+            />
 
           </div>
 
-          {loading && <Loader />}
+          <div className="mt-6 flex gap-4">
 
-          <div className="bg-white dark:bg-slate-800 shadow-xl rounded-xl p-6 mt-8">
+            {editingId ? (
+              <>
+                <button
+                  onClick={updateReview}
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded"
+                >
+                  Update Review
+                </button>
 
-            <h2 className="text-2xl font-semibold mb-4">
-              All Reviews
-            </h2>
-
-            {reviews.length === 0 ? (
-              <p>No Reviews Found.</p>
+                <button
+                  onClick={clearForm}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded"
+                >
+                  Cancel
+                </button>
+              </>
             ) : (
-              <div className="space-y-4">
-
-                {reviews.map((item) => (
-                  <div
-                    key={item._id}
-                    className="border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-slate-700 rounded-xl p-5 flex flex-col md:flex-row justify-between items-start md:items-center"
-                  >
-                    <div>
-  <h3 className="text-xl font-bold text-blue-700 dark:text-blue-400">
-    {item.hotelName}
-  </h3>
-
-  <p className="text-gray-700 dark:text-gray-200">
-    <strong>Guest:</strong> {item.guestName}
-  </p>
-
-  <p className="text-gray-700 dark:text-gray-200">
-    <strong>Rating:</strong> ⭐ {item.rating}/5
-  </p>
-
-  <p className="text-green-600 font-semibold">
-    <strong>Sentiment:</strong> {item.sentiment}
-  </p>
-
-  <p className="text-blue-600 font-semibold">
-    <strong>Theme:</strong> {item.theme}
-  </p>
-
-  <p className="text-gray-700 dark:text-gray-200 mt-2">
-    {item.review}
-  </p>
-</div>
-
-                    <div className="flex gap-3 mt-4 md:mt-0">
-
-                      <button
-                        onClick={() => editReview(item)}
-                        className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded"
-                      >
-                        Edit
-                      </button>
-
-                      <button
-                        onClick={() => deleteReview(item._id)}
-                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
-                      >
-                        Delete
-                      </button>
-
-                    </div>
-
-                  </div>
-                ))}
-
-              </div>
+              <button
+                onClick={analyzeReview}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded"
+              >
+                Add Review
+              </button>
             )}
 
           </div>
-    
+
         </div>
+
+        {loading && <Loader />}
+
+        {/* Reviews List */}
+
+        <div className="bg-white dark:bg-slate-800 shadow-xl rounded-xl p-6 mt-8">
+
+          <h2 className="text-2xl font-semibold mb-4">
+            All Reviews
+          </h2>
+
+          {reviews.length === 0 ? (
+  <p>No Reviews Found.</p>
+) : (
+  <div className="space-y-4">
+
+    {reviews.map((item) => (
+
+      <div
+        key={item._id}
+        className="border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-slate-700 rounded-xl p-5 flex flex-col md:flex-row justify-between items-start md:items-center"
+      >
+
+        <div>
+
+          <h3 className="text-xl font-bold text-blue-700 dark:text-blue-400">
+            {item.hotelName}
+          </h3>
+
+          <p className="text-gray-700 dark:text-gray-200">
+            <strong>Guest:</strong> {item.guestName}
+          </p>
+
+          <p className="text-gray-700 dark:text-gray-200">
+            <strong>Rating:</strong> ⭐ {item.rating}/5
+          </p>
+
+          <p className="text-green-600 font-semibold">
+            <strong>Sentiment:</strong> {item.sentiment}
+          </p>
+
+          <p className="text-blue-600 font-semibold">
+            <strong>Theme:</strong> {item.theme}
+          </p>
+
+          <p className="text-gray-700 dark:text-gray-200 mt-2">
+            {item.review}
+          </p>
+
+        </div>
+
+        <div className="flex gap-3 mt-4 md:mt-0">
+
+          <button
+            onClick={() => editReview(item)}
+            className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded"
+          >
+            Edit
+          </button>
+
+          <button
+            onClick={() => deleteReview(item._id)}
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+          >
+            Delete
+          </button>
+
+        </div>
+
       </div>
 
-      <Footer />
-    </>
-  );
+    ))}
+
+  </div>
+)}
+
+        </div>
+
+      </div>
+    </div>
+
+    <Footer />
+
+  </>
+);
 }
