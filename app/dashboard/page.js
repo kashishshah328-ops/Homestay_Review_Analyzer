@@ -34,28 +34,33 @@ export default function Dashboard() {
   // ===========================
 
   const fetchReviews = async () => {
-    try {
+  try {
+    const token = localStorage.getItem("token");
+    console.log("Token:", token);
 
-      const response = await fetch(
-        "http://localhost:5000/api/reviews",
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+    const response = await fetch("http://localhost:5000/api/reviews", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
+    console.log("Response:", data);
+    console.log("Is Array:", Array.isArray(data));
+
+    if (Array.isArray(data)) {
       setReviews(data);
-
-    } catch (error) {
-
-      toast.error("Failed to load reviews");
-
+    } else {
+      console.log("Unexpected Response:", data);
+      setReviews([]);
     }
-  };
+  } catch (error) {
+    console.error("Fetch Error:", error);
+    setReviews([]);
+  }
+};
 
   // ===========================
   // AUTH CHECK
