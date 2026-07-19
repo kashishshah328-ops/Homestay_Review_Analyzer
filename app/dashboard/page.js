@@ -25,9 +25,12 @@ export default function Dashboard() {
   const [reviews, setReviews] = useState([]);
   const [result, setResult] = useState(null);
 
-  const [loading, setLoading] = useState(false);
+  const [aiResult, setAiResult] = useState("");
+const [loadingAI, setLoadingAI] = useState(false);
+const [loading, setLoading] = useState(false);
 
   const [editingId, setEditingId] = useState(null);
+
 
   // ===========================
   // FETCH REVIEWS
@@ -59,6 +62,42 @@ export default function Dashboard() {
   } catch (error) {
     console.error("Fetch Error:", error);
     setReviews([]);
+  }
+};
+
+const analyzeWithAI = async () => {
+  if (!review) {
+    toast.error("Please enter a review");
+    return;
+  }
+
+  try {
+    setAiResult("");
+    setLoadingAI(true);
+
+    const res = await fetch("http://localhost:5000/api/ai/analyze", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        review,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      setAiResult(data.result);
+      toast.success("AI Analysis Completed");
+    } else {
+      toast.error(data.message);
+    }
+
+  } catch (error) {
+    toast.error("AI Analysis Failed");
+  } finally {
+    setLoadingAI(false);
   }
 };
 
@@ -326,37 +365,66 @@ export default function Dashboard() {
 
           <div className="mt-6 flex gap-4">
 
-            {editingId ? (
-              <>
-                <button
-                  onClick={updateReview}
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded"
-                >
-                  Update Review
-                </button>
+  {editingId ? (
+    <>
+      <button
+        onClick={updateReview}
+        className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded"
+      >
+        Update Review
+      </button>
 
-                <button
-                  onClick={clearForm}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded"
-                >
-                  Cancel
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={analyzeReview}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded"
-              >
-                Add Review
-              </button>
-            )}
+      <button
+        onClick={clearForm}
+        className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded"
+      >
+        Cancel
+      </button>
+    </>
+  ) : (
+    <>
+      <button
+        onClick={analyzeReview}
+        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded"
+      >
+        Add Review
+      </button>
 
-          </div>
+      {/* 👇 New AI Button */}
+      <button
+        onClick={analyzeWithAI}
+        className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded"
+      >
+        Analyze with AI
+      </button>
+    </>
+  )}
+
+</div>
 
         </div>
 
         {loading && <Loader />}
 
+{loadingAI && (
+  <p className="text-purple-600 mt-4 font-semibold">
+    🤖 AI is analyzing your review...
+  </p>
+)}
+
+{aiResult && (
+  <div className="bg-white dark:bg-slate-800 shadow-xl rounded-xl p-6 mt-6">
+
+    <h2 className="text-2xl font-bold mb-4 text-purple-600">
+      🤖 AI Analysis
+    </h2>
+
+    <div className="whitespace-pre-wrap text-gray-800 dark:text-white">
+      {aiResult}
+    </div>
+
+  </div>
+)}
         {/* Reviews List */}
 
         <div className="bg-white dark:bg-slate-800 shadow-xl rounded-xl p-6 mt-8">
