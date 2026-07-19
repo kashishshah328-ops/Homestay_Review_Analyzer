@@ -12,6 +12,7 @@ const connectDB = require("./config/db");   // <-- ADD THIS
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const mongoose = require("mongoose");
 const authRoutes = require("./routes/authRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 dotenv.config();
 
 // Connect to MongoDB
@@ -51,6 +52,8 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 app.use("/api/auth", authRoutes);
+
+app.use("/api/ai", aiRoutes);
 // test route
 app.get("/", (req, res) => {
   res.json({
